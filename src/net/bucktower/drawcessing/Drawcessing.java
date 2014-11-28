@@ -13,6 +13,17 @@ public class Drawcessing extends PApplet {
 	String drawMode = "None";
 	int myHeight = 700;
 	
+	//cross-draw-mode variables
+	int activeColor = color(0);
+	int activeSize = 0;
+	int maxSize = 80;
+	
+	//ink
+	int inkSize = 20;
+	
+	//eraser
+	int eraserSize = 50;
+	
 	//setting up the slots
 	int[] slot1 = { 0, 0, myHeight/10, 50 };
 	int[] slot2 = { myHeight/10, 0, myHeight/10*2, 50 };
@@ -31,6 +42,16 @@ public class Drawcessing extends PApplet {
 	//background
 	int backgroundColor = color(244,241,237);
 	
+	//tr toolbox
+	int numRows = 3;
+	int rowMargin = 5;
+	int rowHeight = 15;
+	int toolBoxWidth = 175;
+	
+	//sidebar
+	int sideBandWidth = 50;
+	int borderBandWidth = 7;
+	
 	public void setup() {
 		SketchObject.setApp(this);
 		
@@ -42,7 +63,7 @@ public class Drawcessing extends PApplet {
 		frameRate(250);
 
 		noStroke();
-		createSideBar(50,7,0,false);
+		createSideBar(sideBandWidth,borderBandWidth,0,false);
 		refreshModeDisplay();
 	}
 
@@ -50,94 +71,98 @@ public class Drawcessing extends PApplet {
 	}
 	
 	public void mouseDragged(){
-		boolean inBounds = false;
-
-		if(mouseX > 57 && !(mouseX > width-180 && mouseY < 20)){
-		  inBounds = true;
-		}
-
-		if(inBounds == true){
-		  if(drawMode == "Ink"){
-		    fill(255,255,0, 15);
-		    ellipse(mouseX,mouseY,20,20);
-		  }
-		  
-		  if(drawMode == "Storytime"){
+			if(mouseX-activeSize > sideBandWidth+borderBandWidth && !(mouseX+activeSize > width-toolBoxWidth && mouseY-activeSize < (rowMargin*2+rowHeight)*numRows)){
+			  if(drawMode == "Ink"){
+				    fill(activeColor);
+				    ellipse(mouseX,mouseY,inkSize,inkSize);
+				  }
+				  
+				  if(drawMode == "Eraser"){
+				    fill(backgroundColor);
+				    ellipse(mouseX,mouseY,eraserSize,eraserSize);
+				  }
+				  
+				  if(drawMode == "Storytime"){
+					  
+				  }
+			}else if(mouseX > width-toolBoxWidth && mouseX < width-rowMargin-(toolBoxWidth-rowMargin)/16 && mouseY > rowMargin*2+rowHeight*2 && mouseY < rowMargin*2+rowHeight*2+15){
+				//changing the size
+				updateSizeScale();
+			}
 			  
-		  }
-		  
-		  if(drawMode == "Eraser"){
-		    fill(backgroundColor);
-		    ellipse(mouseX,mouseY,50,50);
-		  }
+			
 		}
-		}
-
+	
 		public void mouseClicked(){
-
+			//changing the size
+			if(mouseX > width-toolBoxWidth && mouseX < width-rowMargin-(toolBoxWidth-rowMargin)/16 && mouseY > rowMargin*2+rowHeight*2 && mouseY < rowMargin*2+rowHeight*2+15){
+				updateSizeScale();
+			}
 		}
-
+	
 		public void mouseReleased(){
 		//println("Mouse released. MX = "+mouseX+"\tsl1[3] = "+slot1[3]+"\tMY = "+mouseY+"\tsl1[2] = "+slot1[2]);
 		//1ST BUTTON
-
+	
 		boolean inBounds = false;
-
-		if(mouseX > 57 && !(mouseX > width-180 && mouseY < 20)){
+	
+		if(mouseX-activeSize > sideBandWidth+borderBandWidth && !(mouseX+activeSize > width-toolBoxWidth && mouseY-activeSize < (rowMargin*2+rowHeight)*numRows)){
 		  inBounds = true;
 		}
-
+	
 		if (inBounds){
 		  if(drawMode == "Swirl"){
 			  
 		  }
 		}
-
-		//1ST BUTTON
-		if(mouseX <= 57){
-		  if(mouseX <= slot1[3] && mouseY <= slot1[2]){
-		    drawMode = "Ink";
-		    fill(0);
-		    slotActive = 1;
-		  }
-		  //2ND BUTTON
-		  if(mouseX >= slot2[1] && mouseX <= slot2[3] && mouseY >= slot2[0] && mouseY <= slot2[2]){
-		    drawMode = "Eraser";
-		    slotActive = 2;
-		  }
-		  //3RD BUTTON
-		  if(mouseX >= slot3[1] && mouseX <= slot3[3] && mouseY >= slot3[0] && mouseY <= slot3[2]){
-		    drawMode = "Storytime";
-		    slotActive = 3;
-		  }
-		  //4TH BUTTON
-		  if(mouseX >= slot4[1] && mouseX <= slot4[3] && mouseY >= slot4[0] && mouseY <= slot4[2]){
-		    drawMode = "Swirl";
-		    slotActive = 4;
-		  }
-		  //5TH BUTTON
-		  if(mouseX >= slot5[1] && mouseX <= slot5[3] && mouseY >= slot5[0] && mouseY <= slot5[2]){
-		    slotActive = 5;
-		  }
-		  //6TH BUTTON
-		  if(mouseX >= slot6[1] && mouseX <= slot6[3] && mouseY >= slot6[0] && mouseY <= slot6[2]){
-		    slotActive = 6;
-		  }
-		  //7TH BUTTON
-		  if(mouseX >= slot7[1] && mouseX <= slot7[3] && mouseY >= slot7[0] && mouseY <= slot7[2]){
-		    println(drawMode);
-		    slotActive = 7;
-		  }
-		  if(slotActive != 0){
-		    createSideBar(50,7,slotActive,true);
-		  }
-		  refreshModeDisplay();
-		  println("Active tab: " + drawMode);
+	
+			//1ST BUTTON
+			if(mouseX <= 57){
+			  if(mouseX <= slot1[3] && mouseY <= slot1[2]){
+			    drawMode = "Ink";
+			    fill(0);
+			    slotActive = 1;
+			    activeSize = inkSize;
+			  }
+			  //2ND BUTTON
+			  if(mouseX >= slot2[1] && mouseX <= slot2[3] && mouseY >= slot2[0] && mouseY <= slot2[2]){
+			    drawMode = "Eraser";
+			    slotActive = 2;
+			    activeSize = eraserSize;
+			  }
+			  //3RD BUTTON
+			  if(mouseX >= slot3[1] && mouseX <= slot3[3] && mouseY >= slot3[0] && mouseY <= slot3[2]){
+			    drawMode = "Storytime";
+			    slotActive = 3;
+			  }
+			  //4TH BUTTON
+			  if(mouseX >= slot4[1] && mouseX <= slot4[3] && mouseY >= slot4[0] && mouseY <= slot4[2]){
+			    drawMode = "Swirl";
+			    slotActive = 4;
+			  }
+			  //5TH BUTTON
+			  if(mouseX >= slot5[1] && mouseX <= slot5[3] && mouseY >= slot5[0] && mouseY <= slot5[2]){
+			    slotActive = 5;
+			  }
+			  //6TH BUTTON
+			  if(mouseX >= slot6[1] && mouseX <= slot6[3] && mouseY >= slot6[0] && mouseY <= slot6[2]){
+			    slotActive = 6;
+			  }
+			  //7TH BUTTON
+			  if(mouseX >= slot7[1] && mouseX <= slot7[3] && mouseY >= slot7[0] && mouseY <= slot7[2]){
+			    println(drawMode);
+			    slotActive = 7;
+			  }
+			  if(slotActive != 0){
+			    createSideBar(50,7,slotActive,true);
+			  }
+			  refreshModeDisplay();
+			  println("Active tab: " + drawMode);
+			}
 		}
-		}
-
+	
 		void createSideBar(int blueBandWidth, int whiteBandWidth, int slotSelected, boolean onlyWhiteStripe){
-
+	
 		if(onlyWhiteStripe == false){
 		  fill(30,109,214);
 		    rect(0,0,blueBandWidth,height);
@@ -176,21 +201,48 @@ public class Drawcessing extends PApplet {
 		    }
 		  }
 		}
-
+	
 		fill(255);
 		rect(blueBandWidth,0,whiteBandWidth,height);
 		  
-		if(slotSelected > 0){
-		  fill(0);
-		  rect(50,height/10*(slotSelected-1),7,height/10);
+			if(slotSelected > 0){
+				  fill(0);
+				  rect(50,height/10*(slotSelected-1),7,height/10);
+			}
 		}
-		}
-
+	
 		void refreshModeDisplay(){
-		fill(255);
-		rect(width-180, 0, 180, 20);
-		fill(0);
-		text("Draw Mode: " + drawMode, width-175, 15);
+			fill(255);
+			rect(width-180, 0, 180, (rowMargin*2+rowHeight)*numRows);
+			fill(0);
+			text("Draw Mode: " + drawMode, width-toolBoxWidth, rowMargin+rowHeight);
+			drawSizeScale();
+		}
+		
+		private void drawSizeScale(){
+			fill(200);
+			rect(width-toolBoxWidth, rowMargin*2+rowHeight*2,toolBoxWidth-rowMargin,15);
+			fill(30,109,214);
+			rect(width-toolBoxWidth+(int)(1.00*activeSize/maxSize*(toolBoxWidth-rowMargin*2)),rowMargin*2+rowHeight*2,(toolBoxWidth-rowMargin)/8,15);
+			
+			//draw white rect over - less hassle than updating EVERYTHING
+			fill(255);
+			rect(width-toolBoxWidth,rowMargin+rowHeight*2-15,width,20);
+			fill(0);
+			text("Brush Size: " + activeSize, width-toolBoxWidth, rowMargin+rowHeight*2);
+		}
+		
+		private void updateSizeScale(){
+			activeSize = (int)(((1.00*mouseX-(width-toolBoxWidth))/toolBoxWidth)*maxSize);
+			println(activeSize);
+			
+			if(drawMode == "Ink"){
+				inkSize = activeSize;
+			}else if(drawMode == "Eraser"){
+				eraserSize = activeSize;
+			}
+			
+			drawSizeScale();
 		}
 	
 	public static void main(String _args[]) {

@@ -24,6 +24,12 @@ public class Drawcessing extends PApplet {
 	//eraser
 	int eraserSize = 50;
 	
+	//rect
+	int rectSize = 20;
+	
+	//smile
+	//ImageEditor smile;
+	
 	//setting up the slots
 	int[] slot1 = { 0, 0, myHeight/10, 50 };
 	int[] slot2 = { myHeight/10, 0, myHeight/10*2, 50 };
@@ -54,6 +60,8 @@ public class Drawcessing extends PApplet {
 	
 	public void setup() {
 		SketchObject.setApp(this);
+		
+		//ImageEditor smile = new ImageEditor("net/bucktower/drawcessing/data/smiley.png");
 		
 		background(backgroundColor);
 		size(1280,myHeight);
@@ -100,7 +108,7 @@ public class Drawcessing extends PApplet {
 			}
 		}
 	
-		public void mouseReleased(){
+	public void mouseReleased(){
 		//println("Mouse released. MX = "+mouseX+"\tsl1[3] = "+slot1[3]+"\tMY = "+mouseY+"\tsl1[2] = "+slot1[2]);
 		//1ST BUTTON
 	
@@ -111,8 +119,10 @@ public class Drawcessing extends PApplet {
 		}
 	
 		if (inBounds){
-		  if(drawMode == "Swirl"){
-			  
+		  if(drawMode == "Smile"){
+			  //smile.drawAt(mouseX, mouseY);
+		  }else if(drawMode == "Rect"){
+			  rect(mouseX - rectSize/2, mouseY - rectSize/2, rectSize, rectSize);
 		  }
 		}
 	
@@ -132,12 +142,13 @@ public class Drawcessing extends PApplet {
 			  }
 			  //3RD BUTTON
 			  if(mouseX >= slot3[1] && mouseX <= slot3[3] && mouseY >= slot3[0] && mouseY <= slot3[2]){
-			    drawMode = "Storytime";
+			    drawMode = "Rect";
 			    slotActive = 3;
+			    activeSize = rectSize;
 			  }
 			  //4TH BUTTON
 			  if(mouseX >= slot4[1] && mouseX <= slot4[3] && mouseY >= slot4[0] && mouseY <= slot4[2]){
-			    drawMode = "Swirl";
+			    drawMode = "Smile";
 			    slotActive = 4;
 			  }
 			  //5TH BUTTON
@@ -176,13 +187,13 @@ public class Drawcessing extends PApplet {
 		    boolean isValidTab = true;
 		    
 		    switch(barHeight){
-		      case 1: tabLabel = "Mark";
+		      case 1: tabLabel = "Ink";
 		              break;
 		      case 2: tabLabel = "Erase";
 		              break;
-		      case 3: tabLabel = "Story";
+		      case 3: tabLabel = "Rect";
 		              break;
-		      case 4: tabLabel = "Swirl";
+		      case 4: tabLabel = "";
 		              break;
 		      case 5: tabLabel = "";
 		              break;
@@ -240,6 +251,8 @@ public class Drawcessing extends PApplet {
 				inkSize = activeSize;
 			}else if(drawMode == "Eraser"){
 				eraserSize = activeSize;
+			}else if(drawMode == "Rect"){
+				rectSize  = activeSize;
 			}
 			
 			drawSizeScale();

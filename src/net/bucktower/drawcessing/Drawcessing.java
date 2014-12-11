@@ -64,7 +64,8 @@ public class Drawcessing extends PApplet {
 		//ImageEditor smile = new ImageEditor("net/bucktower/drawcessing/data/smiley.png");
 		
 		background(backgroundColor);
-		size(1280,myHeight);
+		//eclipse won't let me export & make something dynamic width/height
+		size(1280,700);
 
 		previousWidth = 0;
 
